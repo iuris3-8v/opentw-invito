@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<!-- Nessuna risorsa esterna e nessuna connessione: l'invito (dopo #) non lascia mai il browser. -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+<meta name="robots" content="noindex">
+<title>Invito OpenTW</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' rx='4' fill='%234F46E5'/%3E%3Ccircle cx='8' cy='8' r='3' fill='white'/%3E%3C/svg%3E">
+<style>
+  :root {
+    --bg: #F5F3FF; --card: #FFFFFF; --fg: #312E81; --muted: #475569; --border: #DDE3F8;
+    --primary: #4F46E5; --on-primary: #FFFFFF; --ok: #047857; --danger: #DC2626;
+    --warn-fg: #92400E; --warn-bg: #FFFBEB; --warn-border: #FDE68A; --chip: #EEF0FB;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121124; --card: #1C1B36; --fg: #E0E7FF; --muted: #A3AEC6; --border: #34325E;
+      --primary: #818CF8; --on-primary: #0F172A; --ok: #34D399; --danger: #F87171;
+      --warn-fg: #FCD34D; --warn-bg: #2B2212; --warn-border: #78350F; --chip: #262548;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; min-height: 100vh; display: grid; place-items: center; padding: 24px 16px;
+    background: var(--bg); color: var(--fg);
+    font: 16px/1.5 "Source Sans 3", "Segoe UI", system-ui, -apple-system, sans-serif;
+  }
+  main {
+    width: 100%; max-width: 480px; background: var(--card); border: 1px solid var(--border);
+    border-radius: 14px; padding: 28px 24px;
+  }
+  .brand { font-weight: 600; font-size: 20px; margin: 0 0 18px; }
+  .eyebrow { font-weight: 600; font-size: 12.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+  h1 { font-size: 24px; line-height: 1.25; margin: 4px 0 8px; font-weight: 600; }
+  p { margin: 0 0 12px; }
+  .muted { color: var(--muted); font-size: 14.5px; }
+  .meta { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 18px; }
+  .chip { background: var(--chip); border-radius: 999px; padding: 4px 12px; font-size: 14px; }
+  .btn {
+    display: block; width: 100%; min-height: 44px; padding: 10px 16px; border-radius: 8px; border: 1px solid var(--border);
+    font: inherit; font-weight: 600; text-align: center; text-decoration: none; cursor: pointer;
+    background: var(--chip); color: var(--fg); transition: filter .2s, transform .1s;
+  }
+  .btn:hover { filter: brightness(.96); }
+  .btn:active { transform: translateY(1px); }
+  .btn:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; }
+  .btn.primary { background: var(--primary); color: var(--on-primary); border-color: transparent; }
+  .callout { background: var(--warn-bg); border: 1px solid var(--warn-border); color: var(--warn-fg); border-radius: 10px; padding: 10px 14px; margin: 18px 0; font-size: 14.5px; }
+  .callout strong { display: block; }
+  details { margin-top: 18px; border-top: 1px solid var(--border); padding-top: 14px; }
+  summary { cursor: pointer; font-weight: 600; }
+  summary:focus-visible { outline: 3px solid var(--primary); outline-offset: 2px; border-radius: 4px; }
+  ol { padding-left: 20px; margin: 10px 0; }
+  li { margin-bottom: 8px; }
+  .error { color: var(--danger); font-weight: 600; }
+  [hidden] { display: none !important; }
+  @media (prefers-reduced-motion: reduce) { .btn { transition: none; } }
+</style>
+</head>
+<body>
+<main>
+  <p class="brand">OpenTW</p>
+
+  <section id="ok" hidden>
+    <p class="eyebrow">Invito ricevuto</p>
+    <h1>Apertura di OpenTW…</h1>
+    <div class="meta">
+      <span class="chip" id="pc"></span>
+      <span class="chip" id="exp"></span>
+    </div>
+    <a class="btn primary" id="open" href="#">Apri in OpenTW</a>
+    <div class="callout">
+      <strong>Collegati solo se sei tu ad aiutare questa persona</strong>
+      Dopo il collegamento confrontate a voce le parole di verifica: devono essere identiche.
+    </div>
+    <details>
+      <summary>OpenTW non si è aperto?</summary>
+      <ol>
+        <li>Se il browser chiede il permesso di aprire OpenTW, scegli <em>Apri</em>.</li>
+        <li>Se OpenTW non è installato, installalo, avvialo una volta e riapri questo link.</li>
+        <li>Altrimenti copia l'invito e incollalo in OpenTW, nel campo <em>ID oppure link d'invito</em>.</li>
+      </ol>
+      <button class="btn" id="copy" type="button">Copia l'invito per OpenTW</button>
+    </details>
+    <p class="muted" style="margin-top:18px">Questa pagina non invia l'invito a nessun server: viene letto solo dal tuo browser.</p>
+  </section>
+
+  <section id="bad" hidden>
+    <p class="eyebrow">Invito non utilizzabile</p>
+    <h1 id="bad-title"></h1>
+    <p class="error" id="bad-text"></p>
+    <p class="muted">Chiedi alla persona che vuoi aiutare di creare un nuovo invito in OpenTW e di inviartelo di nuovo.</p>
+  </section>
+</main>
+
+<script>
+"use strict";
+// Formato dell'invito (crates/net/src/invite.rs, postcard): versione u8, chiave pubblica 32 byte, segreto 16 byte,
+// scadenza u64 (varint), indirizzi. Qui si leggono solo chiave e scadenza, per mostrare ID e validità.
+const SCHEME = "opentw://invito/";
+
+function b64urlDecode(s) {
+  const b64 = s.replace(/-/g, "+").replace(/_/g, "/") + "===".slice((s.length + 3) % 4);
+  return Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+}
+
+function varint(bytes, pos) {
+  let value = 0n, shift = 0n;
+  for (;;) {
+    if (pos >= bytes.length || shift > 63n) throw new Error("varint");
+    const b = bytes[pos++];
+    value |= BigInt(b & 0x7f) << shift;
+    if (!(b & 0x80)) return [value, pos];
+    shift += 7n;
+  }
+}
+
+function luhnDigit(n) {
+  const digits = n.toString().padStart(9, "0").split("").reverse().map(Number);
+  const sum = digits.reduce((acc, d, i) => acc + (i % 2 === 0 ? Math.floor(d * 2 / 10) + (d * 2) % 10 : d), 0);
+  return (10 - sum % 10) % 10;
+}
+
+// Stesso calcolo di opentw_core::device_id: SHA-256("opentw-id-v1" ‖ chiave), primi 8 byte, 9 cifre + cifra di controllo.
+async function deviceId(pubkey) {
+  const data = new Uint8Array([...new TextEncoder().encode("opentw-id-v1"), ...pubkey]);
+  const h = new Uint8Array(await crypto.subtle.digest("SHA-256", data));
+  const first = h.slice(0, 8).reduce((acc, b) => (acc << 8n) | BigInt(b), 0n);
+  const base = first % 1000000000n;
+  const s = (base * 10n + BigInt(luhnDigit(base))).toString().padStart(10, "0");
+  return `${s.slice(0, 3)} ${s.slice(3, 6)} ${s.slice(6, 9)}-${s.slice(9)}`;
+}
+
+function show(id) { document.getElementById(id).hidden = false; }
+
+function fail(title, text) {
+  document.getElementById("bad-title").textContent = title;
+  document.getElementById("bad-text").textContent = text;
+  show("bad");
+}
+
+async function main() {
+  // il frammento può arrivare con spazi o a capo (incollato da una chat) o con una barra finale
+  const payload = decodeURIComponent(location.hash.slice(1)).replace(/\s+/g, "").replace(/\/+$/, "");
+  if (!/^[A-Za-z0-9_-]{60,1200}$/.test(payload)) {
+    return fail("Link incompleto", "Manca l'invito dopo il simbolo #, oppure il link è stato tagliato.");
+  }
+  let pubkey, expires;
+  try {
+    const bytes = b64urlDecode(payload);
+    if (bytes[0] !== 1) throw new Error("versione");
+    pubkey = bytes.slice(1, 33);
+    if (bytes.length < 50) throw new Error("corto");
+    [expires] = varint(bytes, 49);
+  } catch {
+    return fail("Link non valido", "Questo non è un invito di OpenTW, oppure è stato modificato.");
+  }
+  const expiresMs = Number(expires) * 1000;
+  if (expiresMs <= Date.now()) {
+    return fail("Invito scaduto", "Gli inviti di OpenTW valgono 15 minuti e una sola volta.");
+  }
+  const link = SCHEME + payload;
+  document.getElementById("pc").textContent = "PC " + await deviceId(pubkey);
+  const at = new Date(expiresMs).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+  document.getElementById("exp").textContent = "Valido fino alle " + at;
+  const open = document.getElementById("open");
+  open.href = link;
+  const copy = document.getElementById("copy");
+  copy.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(link);
+      copy.textContent = "Copiato";
+    } catch {
+      copy.textContent = "Copia non riuscita: tieni premuto su “Apri in OpenTW” e copia il link";
+    }
+    setTimeout(() => { copy.textContent = "Copia l'invito per OpenTW"; }, 2000);
+  });
+  show("ok");
+  // primo tentativo automatico; il pulsante resta per i browser che vogliono un clic
+  setTimeout(() => { location.href = link; }, 400);
+}
+
+main();
+</script>
+</body>
+</html>
