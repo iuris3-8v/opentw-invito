@@ -183,6 +183,8 @@ async function main() {
   setTimeout(() => { location.href = link; }, 400);
 }
 
+// un nuovo invito aperto nella stessa scheda cambia solo il frammento: si riparte da capo
+addEventListener("hashchange", () => location.reload());
 main();
 </script>
 </body>
